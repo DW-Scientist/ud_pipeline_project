@@ -66,4 +66,5 @@ def main():
 
 
 if __name__ == "__main__":
+    print("start data preprocessing...")
     main()
