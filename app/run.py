@@ -14,12 +14,10 @@ from flask import render_template, request, jsonify
 from plotly.graph_objs import Bar, Scatter
 import joblib
 from sqlalchemy import create_engine
-from langdetect import detect
-
 
 app = Flask(__name__)
 
-
+# write the tokenizer function for the CountVectorizer
 def tokenize(text):
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
@@ -32,6 +30,7 @@ def tokenize(text):
     return clean_tokens
 
 
+# writing a own VerExtraction class for the ml pipeline
 class StartingVerbExtractor(BaseEstimator, TransformerMixin):
     def starting_verb(self, text):
         sentence_list = nltk.sent_tokenize(text)
@@ -50,12 +49,11 @@ class StartingVerbExtractor(BaseEstimator, TransformerMixin):
         return pd.DataFrame(X_tagged)
 
 
-# load data
-# engine = create_engine("sqlite:///" + "disaster_response_db.db")
+# loading the data from our created database
 engine = create_engine("sqlite:///../data/disaster_response_db.db")
 df = pd.read_sql_table("disaster_response_db_table", engine)
 
-# load model
+# loading our created classifier model
 model = joblib.load("../models/classifier.pkl")
 
 
@@ -65,7 +63,6 @@ model = joblib.load("../models/classifier.pkl")
 def index():
 
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby("genre").count()["message"]
     genre_names = list(genre_counts.index)
 
@@ -74,7 +71,6 @@ def index():
     cat_rel_sum = cat_sum / len(df)
 
     # create visuals
-    # TODO: Below is an example - modify to create your own visuals
     graphs = [
         # GRAPH 1 - genre graph
         {
