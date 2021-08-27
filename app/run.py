@@ -11,9 +11,10 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
+from plotly.graph_objs import Bar, Scatter
 import joblib
 from sqlalchemy import create_engine
+from langdetect import detect
 
 
 app = Flask(__name__)
@@ -68,8 +69,9 @@ def index():
     genre_counts = df.groupby("genre").count()["message"]
     genre_names = list(genre_counts.index)
 
-    category_names = df.iloc[:, 4:].columns
-    category_boolean = (df.iloc[:, 4:] != 0).sum().values
+    cat_names = df.iloc[:, 4:].columns
+    cat_sum = (df.iloc[:, 4:] != 0).sum().values
+    cat_rel_sum = cat_sum / len(df)
 
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
@@ -83,11 +85,20 @@ def index():
                 "xaxis": {"title": "Genre"},
             },
         },
-        # GRAPH 2 - category graph
+        # GRAPH 2 - which cat occures the most
         {
-            "data": [Bar(x=category_names, y=category_boolean)],
+            "data": [Bar(x=cat_names, y=cat_sum)],
             "layout": {
                 "title": "Distribution of Message Categories",
+                "yaxis": {"title": "Count"},
+                "xaxis": {"title": "Category", "tickangle": 35},
+            },
+        },
+        # Graph 3 - relative distribution of categories
+        {
+            "data": [Scatter(x=cat_names, y=cat_rel_sum)],
+            "layout": {
+                "title": f"Relative Distribution of Message Categories (One message can belong to multiple categories); n = {len(df)} messages",
                 "yaxis": {"title": "Count"},
                 "xaxis": {"title": "Category", "tickangle": 35},
             },
