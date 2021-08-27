@@ -1,3 +1,5 @@
+# import libraries
+
 import nltk
 from nltk.sem.evaluate import _ELEMENT_SPLIT_RE
 
@@ -8,7 +10,6 @@ nltk.download("averaged_perceptron_tagger")
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
-# import libraries
 import numpy as np
 import pandas as pd
 
@@ -20,7 +21,6 @@ import re
 from sqlalchemy import create_engine
 import pickle
 
-from scipy.stats import gmean
 
 # import relevant functions/modules from the sklearn
 from sklearn.pipeline import Pipeline, FeatureUnion
@@ -41,15 +41,12 @@ import pandas as pd
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 
-from sklearn.metrics import confusion_matrix
-from sklearn.model_selection import GridSearchCV
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline, FeatureUnion
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
-
+# writing a fucntion for loading the data to train our model
 def load_data(database_filepath):
     engine = create_engine("sqlite:///" + database_filepath)
     table = os.path.basename(database_filepath).replace(".db", "") + "_table"
@@ -57,8 +54,11 @@ def load_data(database_filepath):
 
     # only value=0 occurences in child_alone -> drop
     df.drop("child_alone", axis=1, inplace=True)
+
+    # drop rows with missing values
     df.dropna(inplace=True)
 
+    # allow no 2 values - only boolean values 1 | 0
     df["related"] = df["related"].map(lambda x: 1 if x == 2 else x)
 
     # splitting into features and labels
@@ -69,6 +69,7 @@ def load_data(database_filepath):
     return X, y, plot_names
 
 
+# writing a tokenizer function for the CountVectorizer including a regex for url detection (we want to exclude those )
 def tokenize(text):
     # Replace all urls with a urlplaceholder string
     url_regex = (
@@ -93,6 +94,7 @@ def tokenize(text):
     return clean_tokens
 
 
+# writing a own VerExtraction class for the ml pipeline
 class StartingVerbExtractor(BaseEstimator, TransformerMixin):
     def starting_verb(self, text):
         sentence_list = nltk.sent_tokenize(text)
@@ -111,6 +113,7 @@ class StartingVerbExtractor(BaseEstimator, TransformerMixin):
         return pd.DataFrame(X_tagged)
 
 
+# building the pipeline by using a AdaBoostClassifier as our estimator
 def build_model():
     pipeline = Pipeline(
         [
@@ -141,6 +144,7 @@ def build_model():
     return pipeline
 
 
+# printing a overall accuracy and the classificiton report of sklearn
 def evaluate_model(model, X_test, Y_test, category_names):
     pred = model.predict(X_test)
     acc = (pred == Y_test).mean().mean()
@@ -149,10 +153,12 @@ def evaluate_model(model, X_test, Y_test, category_names):
     print("Confusion Matrix:\n", confusion_mat)
 
 
+# save the model to use it within our webapp
 def save_model(model, model_filepath):
     pickle.dump(model, open(model_filepath, "wb"))
 
 
+# function for executing all together
 def main():
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]

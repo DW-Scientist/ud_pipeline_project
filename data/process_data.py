@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from sqlalchemy import create_engine
 
-
+# reading the files within the data directory
 def load_data(messages_filepath, categories_filepath):
     message_data = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
@@ -11,6 +11,7 @@ def load_data(messages_filepath, categories_filepath):
     return df
 
 
+# prepare the data for our alghorithm
 def clean_data(df):
     cats = df["categories"].str.split(";", expand=True)
     r = cats.iloc[[1]]
@@ -28,6 +29,7 @@ def clean_data(df):
     return df
 
 
+# save the data to our database for the our algorithm
 def save_data(df, database_filename):
     engine = create_engine("sqlite:///" + database_filename)
     table_name = database_filename.replace(".db", "") + "_table"
@@ -35,6 +37,7 @@ def save_data(df, database_filename):
     df.to_sql(table_name, engine, index=False, if_exists="replace")
 
 
+# writing a main function to execute everything together
 def main():
     if len(sys.argv) == 4:
 
