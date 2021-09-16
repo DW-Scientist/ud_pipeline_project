@@ -14,8 +14,10 @@ So if you want - clone the repo and start :)
 After cloning this projects make sure you install all the necessary packages.
 For this you should create yourself first a virtual enivironment.
 <br/>To do this head into the cloned repo directory and type the following command in your terminal:<br/>
-```python3 -m venv venv```<br/>
-This creates a virtual environment called venv with the latest python3 version.
+```python3 -m venv venv```
+
+This creates a virtual environment called venv with the latest python3 version. Activat it with the following command:
+```source venv/bin/activate```
 
 Now install the packages using the following pip command:<br/>
 ```pip install -r requirements.txt```<br/>
