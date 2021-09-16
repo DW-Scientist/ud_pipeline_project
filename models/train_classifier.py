@@ -119,7 +119,7 @@ def build_model():
 
     param_grid = {
         "classifier__estimator__learning_rate": [0.01, 0.02],
-        "classifier__estimator__n_estimators": [10, 20],
+        "classifier__estimator__n_estimators": [10, 100],
     }
 
     pipeline = Pipeline(
