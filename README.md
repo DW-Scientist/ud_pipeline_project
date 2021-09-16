@@ -18,7 +18,7 @@ For this you should create yourself first a virtual enivironment.
 This creates a virtual environment called venv with the latest python3 version.
 
 Now install the packages using the following pip command:<br/>
-```pip install requirements.txt```<br/>
+```pip install -r requirements.txt```<br/>
 Now you are ready to run the app
 
 ## run the app
