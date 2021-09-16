@@ -30,6 +30,7 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.feature_extraction.text import TfidfTransformer, CountVectorizer
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.model_selection import GridSearchCV
 
 import nltk
 
@@ -115,6 +116,12 @@ class StartingVerbExtractor(BaseEstimator, TransformerMixin):
 
 # building the pipeline by using a AdaBoostClassifier as our estimator
 def build_model():
+
+    param_grid = {
+        "classifier__estimator__learning_rate": [0.01, 0.02],
+        "classifier__estimator__n_estimators": [10, 20],
+    }
+
     pipeline = Pipeline(
         [
             (
@@ -141,6 +148,7 @@ def build_model():
         ]
     )
 
+    cv = GridSearchCV(pipeline, param_grid=param_grid, scoring="f1_micro", n_jobs=-1)
     return pipeline
 
 
