@@ -149,7 +149,7 @@ def build_model():
     )
 
     cv = GridSearchCV(pipeline, param_grid=param_grid, scoring="f1_micro", n_jobs=-1)
-    return pipeline
+    return cv
 
 
 # printing a overall accuracy and the classificiton report of sklearn
