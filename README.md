@@ -24,6 +24,12 @@ Now install the packages using the following pip command:<br/>
 `pip install -r requirements.txt`<br/>
 Now you are ready to run the app
 
+## preprocess the data
+Head into ```data``` and run ```python process_data.py```
+
+## train the model
+To train the machine learning model head into the ```models``` folder and run ```python train_classifier.py```
+
 ## run the app
 
 To run the app on your local machine you first have to head into the `app` directory by using the following command:<br/>
